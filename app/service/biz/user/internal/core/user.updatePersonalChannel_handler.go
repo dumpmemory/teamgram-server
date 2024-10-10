@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright 2024 Teamgram Authors
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,22 +16,20 @@
 // Author: teamgramio (teamgram.io@gmail.com)
 //
 
-package svc
+package core
 
 import (
-	"github.com/teamgram/teamgram-server/app/bff/users/internal/config"
-	"github.com/teamgram/teamgram-server/app/bff/users/internal/dao"
-	"github.com/teamgram/teamgram-server/app/bff/users/internal/plugin"
+	"github.com/teamgram/proto/mtproto"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-type ServiceContext struct {
-	Config config.Config
-	*dao.Dao
-}
+// UserUpdatePersonalChannel
+// user.updatePersonalChannel user_id:long channel_id:long = Bool;
+func (c *UserCore) UserUpdatePersonalChannel(in *user.TLUserUpdatePersonalChannel) (*mtproto.Bool, error) {
+	rB := c.svcCtx.Dao.UpdatePersonalChannel(
+		c.ctx,
+		in.GetUserId(),
+		in.GetChannelId())
 
-func NewServiceContext(c config.Config, plugin1 plugin.StoryPlugin, plugin2 plugin.PersonalChannelPlugin) *ServiceContext {
-	return &ServiceContext{
-		Config: c,
-		Dao:    dao.New(c, plugin1, plugin2),
-	}
+	return mtproto.ToBool(rB), nil
 }
